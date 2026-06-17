@@ -46,6 +46,94 @@
   --radius-lg: 18px;
 }
 
+/* Light Mode Variables Override */
+:root.light-theme {
+  --bg-primary: #f8fafc;
+  --bg-secondary: #e2e8f0;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-card-hover: rgba(255, 255, 255, 0.98);
+  --border-card: rgba(15, 23, 42, 0.08);
+  --border-focus: #2563eb;
+  
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  
+  --color-gcp-blue: #2563eb;
+  --color-gcp-blue-glow: rgba(37, 99, 235, 0.12);
+  
+  /* Slightly more saturated backgrounds for tags in light mode to ensure contrast */
+  --color-feature-bg: rgba(16, 185, 129, 0.15);
+  --color-announcement-bg: rgba(59, 130, 246, 0.15);
+  --color-issue-bg: rgba(244, 63, 94, 0.15);
+  --color-deprecation-bg: rgba(168, 85, 247, 0.15);
+  --color-generic-bg: rgba(107, 114, 128, 0.15);
+  
+  --shadow-glow: 0 0 20px rgba(37, 99, 235, 0.08);
+}
+
+:root.light-theme .bg-blur {
+  opacity: 0.06;
+}
+
+/* Mock X Card Light Mode Override */
+:root.light-theme .x-card-preview {
+  background-color: #ffffff;
+  border: 1px solid #e1e8ed;
+}
+
+:root.light-theme .x-name {
+  color: #0f1419;
+}
+
+:root.light-theme .x-handle {
+  color: #536471;
+}
+
+:root.light-theme .x-tweet-text {
+  color: #0f1419;
+}
+
+:root.light-theme .x-logo-watermark {
+  color: #0f1419;
+}
+
+/* Theme Toggle Button Style */
+.theme-toggle-btn {
+  background: none;
+  border: 1px solid var(--border-card);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all var(--transition-fast);
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: var(--bg-secondary);
+}
+
+.theme-toggle-btn:hover {
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+:root.light-theme .theme-toggle-btn:hover {
+  border-color: rgba(15, 23, 42, 0.15);
+}
+
+.theme-toggle-btn i {
+  transition: transform var(--transition-normal);
+}
+
+.theme-toggle-btn.clicked i {
+  transform: rotate(360deg);
+}
+
 /* --- Base Reset & Scrollbars --- */
 * {
   box-sizing: border-box;
@@ -280,7 +368,7 @@ body {
 
 .search-box input {
   width: 100%;
-  background-color: #0b0f19;
+  background-color: var(--bg-secondary);
   border: 1px solid var(--border-card);
   color: var(--text-primary);
   font-family: var(--font-primary);
@@ -293,8 +381,8 @@ body {
 .search-box input:focus {
   outline: none;
   border-color: var(--border-focus);
-  background-color: #111827;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.15);
+  background-color: var(--bg-card-hover);
+  box-shadow: 0 0 10px var(--color-gcp-blue-glow);
 }
 
 .clear-search-btn {
@@ -321,7 +409,7 @@ body {
 }
 
 .filter-pill {
-  background-color: #0b0f19;
+  background-color: var(--bg-secondary);
   border: 1px solid var(--border-card);
   color: var(--text-secondary);
   font-family: var(--font-primary);
@@ -337,9 +425,13 @@ body {
 }
 
 .filter-pill:hover {
-  background-color: #111827;
+  background-color: var(--bg-card-hover);
   color: var(--text-primary);
   border-color: rgba(255, 255, 255, 0.15);
+}
+
+:root.light-theme .filter-pill:hover {
+  border-color: rgba(15, 23, 42, 0.15);
 }
 
 .filter-pill.active {

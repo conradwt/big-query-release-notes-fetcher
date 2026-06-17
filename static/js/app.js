@@ -7,6 +7,7 @@ let selectedUpdate = null;
 // DOM Elements
 const refreshBtn = document.getElementById('refreshBtn');
 const exportCsvBtn = document.getElementById('exportCsvBtn');
+const themeToggleBtn = document.getElementById('themeToggleBtn');
 const searchInput = document.getElementById('searchInput');
 const clearSearchBtn = document.getElementById('clearSearchBtn');
 const filterPills = document.querySelectorAll('.filter-pill');
@@ -46,6 +47,7 @@ if (charProgressCircle) {
 
 // --- Init Application ---
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   fetchNotes();
   setupEventListeners();
   setupModalDismissFallback();
@@ -226,6 +228,11 @@ function getTagClass(type) {
 
 // --- Event Listeners Setup ---
 function setupEventListeners() {
+  // Theme Toggle
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', toggleTheme);
+  }
+
   // Refresh Notes
   refreshBtn.addEventListener('click', () => fetchNotes(true));
   retryBtn.addEventListener('click', () => fetchNotes(true));
@@ -473,4 +480,41 @@ function exportToCsv() {
   document.body.removeChild(link);
   
   showToast('CSV export downloaded successfully!', 'success');
+}
+
+// --- Theme Management ---
+function initTheme() {
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  const icon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
+  if (savedTheme === 'light') {
+    document.documentElement.classList.add('light-theme');
+    if (icon) {
+      icon.className = 'fa-solid fa-sun';
+    }
+  } else {
+    document.documentElement.classList.remove('light-theme');
+    if (icon) {
+      icon.className = 'fa-solid fa-moon';
+    }
+  }
+}
+
+function toggleTheme() {
+  const isLight = document.documentElement.classList.toggle('light-theme');
+  localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  
+  const icon = themeToggleBtn ? themeToggleBtn.querySelector('i') : null;
+  if (icon) {
+    icon.className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+  }
+  
+  // Rotate animation trigger
+  if (themeToggleBtn) {
+    themeToggleBtn.classList.add('clicked');
+    setTimeout(() => {
+      themeToggleBtn.classList.remove('clicked');
+    }, 250);
+  }
+  
+  showToast(`${isLight ? 'Light' : 'Dark'} mode enabled!`, 'info');
 }
