@@ -19,6 +19,7 @@ Built using a lightweight **Python Flask** backend and a custom, vanilla **HTML5
   - Limits and warns you if drafts exceed X's standard 280-character limit.
 - **Copy to Clipboard**: Copy the plain text description of any release note to your clipboard with a single click (includes a visual success checkmark state and toast alert).
 - **Export to CSV**: Export the currently loaded and filtered set of release notes to a CSV file (`"Date","Type","Link","Description"`) directly from the browser.
+- **Theme Toggle Switch**: Swap between Light and Dark mode using a custom-styled header button (persists automatically in `localStorage` and adapts the whole interface, including the X/Twitter preview card).
 - **In-Memory Caching**: Caches feed results for 5 minutes to optimize performance and respect Google's feed limits.
 - **Responsive Glassmorphism Styling**: Styled using deep slate hues, dynamic glow details, and a responsive grid layout optimized for both desktop and mobile viewports.
 
