@@ -128,6 +128,12 @@ body {
   border-bottom: 1px solid var(--border-card);
 }
 
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
 .logo-container {
   display: flex;
   align-items: center;
@@ -464,13 +470,19 @@ body {
   color: var(--color-generic);
 }
 
-/* Tweet Icon Action Button */
-.btn-tweet-action {
+/* Card Header Action Buttons */
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-card-action {
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 1rem;
   transition: all var(--transition-fast);
   padding: 0.4rem;
   border-radius: 50%;
@@ -481,10 +493,18 @@ body {
   height: 32px;
 }
 
-.btn-tweet-action:hover {
+.btn-card-action:hover {
+  transform: scale(1.1);
+}
+
+.btn-card-action.btn-copy:hover {
+  color: var(--color-feature);
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.btn-card-action.btn-tweet:hover {
   color: var(--color-twitter);
   background-color: rgba(29, 155, 240, 0.1);
-  transform: scale(1.1);
 }
 
 /* Card Content HTML Formatting */
