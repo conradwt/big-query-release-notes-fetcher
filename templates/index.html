@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BigQuery Release Notes Tracker</title>
+  
+  <!-- Inter & Outfit Fonts from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+
+  <!-- Background decorative elements for glassmorphism visual depth -->
+  <div class="bg-blur bg-blur-1"></div>
+  <div class="bg-blur bg-blur-2"></div>
+
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo-container">
+        <div class="logo-icon">
+          <i class="fa-solid fa-database animated-db"></i>
+          <div class="logo-badge">GCP</div>
+        </div>
+        <div class="logo-text">
+          <h1>BigQuery</h1>
+          <p>Release Notes Explorer</p>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <button id="refreshBtn" class="btn btn-primary" title="Refresh Release Notes">
+          <i class="fa-solid fa-rotate-right spinner-icon"></i>
+          <span>Refresh</span>
+        </button>
+      </div>
+    </header>
+
+    <section class="controls-panel">
+      <!-- Real-time Search -->
+      <div class="search-box">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="searchInput" placeholder="Search updates by keyword..." aria-label="Search updates">
+        <button id="clearSearchBtn" class="clear-search-btn" style="display: none;" title="Clear search">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Quick Filter Pills -->
+      <div class="filter-group" role="group" aria-label="Filter release notes by type">
+        <button class="filter-pill active" data-filter="all">All</button>
+        <button class="filter-pill" data-filter="feature"><span class="pill-dot feature-dot"></span>Features</button>
+        <button class="filter-pill" data-filter="announcement"><span class="pill-dot announcement-dot"></span>Announcements</button>
+        <button class="filter-pill" data-filter="issue"><span class="pill-dot issue-dot"></span>Issues</button>
+        <button class="filter-pill" data-filter="deprecation"><span class="pill-dot deprecation-dot"></span>Deprecations</button>
+      </div>
+    </section>
+
+    <!-- App Main Feed -->
+    <main class="main-content">
+      <!-- Loading Skeleton State -->
+      <div id="loadingState" class="loading-state">
+        <div class="skeleton-date-group">
+          <div class="skeleton skeleton-title"></div>
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-pill"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line short"></div>
+          </div>
+          <div class="skeleton-card">
+            <div class="skeleton skeleton-pill"></div>
+            <div class="skeleton skeleton-line"></div>
+            <div class="skeleton skeleton-line"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <i class="fa-solid fa-triangle-exclamation empty-icon"></i>
+        <h3>No matching updates found</h3>
+        <p>Try refining your search keyword or selecting a different filter.</p>
+        <button id="resetFiltersBtn" class="btn btn-secondary">Reset Filters</button>
+      </div>
+
+      <!-- Error State -->
+      <div id="errorState" class="error-state" style="display: none;">
+        <i class="fa-solid fa-circle-exclamation error-icon"></i>
+        <h3>Failed to load release notes</h3>
+        <p id="errorMessage">An unexpected error occurred while connecting to the feed.</p>
+        <button id="retryBtn" class="btn btn-secondary"><i class="fa-solid fa-arrows-rotate"></i> Retry Connection</button>
+      </div>
+
+      <!-- Content Container -->
+      <div id="notesContainer" class="notes-container"></div>
+    </main>
+
+    <footer class="app-footer">
+      <p>Data sourced automatically from the <a href="https://docs.cloud.google.com/feeds/bigquery-release-notes.xml" target="_blank" rel="noopener noreferrer">BigQuery Release Notes Feed</a>.</p>
+      <p class="status-indicator">
+        <span class="status-dot"></span>
+        <span id="lastUpdatedText">Last updated: Never</span>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Twitter Composer Dialog (Modal) using HTML5 dialog -->
+  <dialog id="tweetComposer" closedby="any" aria-labelledby="dialogTitle">
+    <div class="modal-wrapper">
+      <div class="modal-header">
+        <h2 id="dialogTitle"><i class="fa-brands fa-x-twitter"></i> Share Update on X</h2>
+        <button class="modal-close-btn" id="closeComposerBtn" aria-label="Close dialog">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="update-preview-box">
+          <div class="preview-tag-row">
+            <span id="modalTypeTag" class="update-tag">Feature</span>
+            <span id="modalDateTag" class="modal-date">June 16, 2026</span>
+          </div>
+          <div class="preview-text-scroll" id="modalTextPreview"></div>
+        </div>
+
+        <div class="composer-area">
+          <label for="tweetTextArea">Edit your post:</label>
+          <textarea id="tweetTextArea" rows="5" maxlength="500" placeholder="What's happening?"></textarea>
+          
+          <div class="composer-footer">
+            <div class="character-progress-container">
+              <svg class="progress-ring" width="36" height="36">
+                <circle class="progress-ring__circle-bg" stroke="#334155" stroke-width="3" fill="transparent" r="14" cx="18" cy="18"/>
+                <circle class="progress-ring__circle" id="charProgressCircle" stroke="#60a5fa" stroke-width="3.5" fill="transparent" r="14" cx="18" cy="18"/>
+              </svg>
+              <span id="charCounter" class="char-counter">0 / 280</span>
+            </div>
+            <div class="limit-warning" id="limitWarning" style="display: none;">
+              <i class="fa-solid fa-triangle-exclamation"></i> Exceeds standard 280 character limit
+            </div>
+          </div>
+        </div>
+
+        <div class="x-card-preview">
+          <div class="x-card-header">
+            <div class="x-avatar">
+              <i class="fa-solid fa-database"></i>
+            </div>
+            <div class="x-user-info">
+              <span class="x-name">Google Cloud Updates</span>
+              <span class="x-handle">@GCPUpdates</span>
+            </div>
+            <i class="fa-brands fa-x-twitter x-logo-watermark"></i>
+          </div>
+          <div class="x-card-body">
+            <p id="xTweetTextPreview" class="x-tweet-text"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancelComposerBtn">Cancel</button>
+        <button class="btn btn-twitter" id="postTweetBtn">
+          <i class="fa-brands fa-x-twitter"></i>
+          <span>Share Draft</span>
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Toast Notifications Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Application Logic -->
+  <script type="module" src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
