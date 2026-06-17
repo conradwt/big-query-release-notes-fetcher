@@ -17,6 +17,8 @@ Built using a lightweight **Python Flask** backend and a custom, vanilla **HTML5
   - Preview drafts in a mock-up card styled like a post on X.
   - Dynamically tracks character counts using an SVG radial progress ring.
   - Limits and warns you if drafts exceed X's standard 280-character limit.
+- **Copy to Clipboard**: Copy the plain text description of any release note to your clipboard with a single click (includes a visual success checkmark state and toast alert).
+- **Export to CSV**: Export the currently loaded and filtered set of release notes to a CSV file (`"Date","Type","Link","Description"`) directly from the browser.
 - **In-Memory Caching**: Caches feed results for 5 minutes to optimize performance and respect Google's feed limits.
 - **Responsive Glassmorphism Styling**: Styled using deep slate hues, dynamic glow details, and a responsive grid layout optimized for both desktop and mobile viewports.
 
